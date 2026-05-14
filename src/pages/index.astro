@@ -1,0 +1,81 @@
+---
+import EmbedGenerator from "../components/EmbedGenerator.astro";
+import SiteEntry from "../components/SiteEntry.astro";
+import UnknownFromWarning from "../components/UnknownFromWarning.astro";
+import sites from "../data/sites.json";
+import Layout from "../layouts/Layout.astro";
+import type { WebringSite } from "../types/webring";
+
+const list = sites as WebringSite[];
+---
+
+<Layout
+  title="Web dev & web design webring"
+  description="Discover personal and studio sites focused on web development and web design. Join the ring or grab an embed for your own site."
+>
+  <h1 class="hero-title">Web development &amp; web design webring</h1>
+  <p class="hero-lede">
+    This hub lists sites in the ring and hosts the prev, next, and random
+    redirects members use in their footers.
+  </p>
+  <UnknownFromWarning />
+  <section class="sites-section" aria-labelledby="sites">
+    <h2 id="sites" class="section-title">Sites in the ring</h2>
+    <p class="section-meta">
+      {list.length}
+      {list.length === 1 ? "site" : "sites"} listed.
+    </p>
+    <ul class="member-list">
+      {
+        list.map((site) => (
+          <SiteEntry
+            name={site.name}
+            url={site.url}
+            description={site.description}
+          />
+        ))
+      }
+    </ul>
+  </section>
+
+  <EmbedGenerator />
+</Layout>
+
+<style>
+  .hero-title {
+    font-size: clamp(1.65rem, 4vw, 2.1rem);
+    line-height: 1.2;
+    margin: 0 0 0.65rem;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .hero-lede {
+    margin: 0 0 1.25rem;
+    max-width: 36rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .sites-section {
+    margin-top: 0.5rem;
+  }
+
+  .section-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.25rem;
+  }
+
+  .section-meta {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .member-list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+</style>

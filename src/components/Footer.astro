@@ -1,0 +1,23 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <p class="site-footer__text">Web dev &amp; web design webring · {year}</p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: var(--footer-bg);
+  }
+
+  .site-footer__text {
+    margin: 0;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+</style>

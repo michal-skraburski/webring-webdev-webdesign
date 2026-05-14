@@ -1,0 +1,313 @@
+---
+
+---
+
+<section class="embed" aria-labelledby="embed-heading">
+  <h2 id="embed-heading" class="embed__title">Add the webring to your site</h2>
+  <p class="embed__lede">
+    Enter your site URL, then copy the HTML and paste it into your page. The
+    snippet links to this hub and to the previous, next, and a random member.
+  </p>
+  <p class="embed__note">
+    Use the exact same URL as in <code>sites.json</code>, or prev/next will not
+    recognise your site and visitors will be sent back here.
+  </p>
+
+  <label class="field" for="embed-url">
+    <span class="field__label">Your site URL</span>
+    <input
+      id="embed-url"
+      class="field__input"
+      type="url"
+      required
+      placeholder="https://yoursite.com"
+      autocomplete="off"
+      spellcheck="false"
+    />
+  </label>
+  <p id="embed-error" class="field__error" hidden>
+    Please enter a valid URL (including https://).
+  </p>
+
+  <label class="field" for="embed-output">
+    <span class="field__label">Snippet</span>
+    <textarea
+      id="embed-output"
+      class="field__textarea"
+      readonly
+      rows="9"
+      aria-describedby="embed-error"
+      placeholder="Your snippet will appear here once you enter a valid URL."
+    ></textarea>
+  </label>
+
+  <div class="field" aria-live="polite">
+    <span class="field__label">Preview</span>
+    <div id="embed-preview" class="preview" data-empty="true">
+      <p class="preview__empty">
+        Enter a valid URL above to see how the snippet will render.
+      </p>
+    </div>
+  </div>
+
+  <button id="embed-copy" class="embed__copy" type="button" disabled
+    >Copy snippet</button
+  >
+</section>
+
+<script>
+  import { HUB_BASE_URL } from "../lib/hub-url";
+
+  const input = document.getElementById("embed-url") as HTMLInputElement | null;
+  const output = document.getElementById(
+    "embed-output",
+  ) as HTMLTextAreaElement | null;
+  const copy = document.getElementById(
+    "embed-copy",
+  ) as HTMLButtonElement | null;
+  const errEl = document.getElementById(
+    "embed-error",
+  ) as HTMLParagraphElement | null;
+  const preview = document.getElementById(
+    "embed-preview",
+  ) as HTMLDivElement | null;
+
+  if (input && output && copy && errEl && preview) {
+    const COPY_LABEL = copy.textContent ?? "Copy snippet";
+    const previewEmpty = preview.innerHTML;
+
+    type Link = { label: string; entityLabel: string; href: string };
+
+    function normalize(raw: string): string | null {
+      try {
+        const u = new URL(raw);
+        if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+        u.hash = "";
+        if (u.pathname.length > 1 && u.pathname.endsWith("/")) {
+          u.pathname = u.pathname.slice(0, -1);
+        }
+        return u.href;
+      } catch {
+        return null;
+      }
+    }
+
+    function buildLinks(from: string): Link[] {
+      const f = encodeURIComponent(from);
+      const base = HUB_BASE_URL || window.location.origin;
+      return [
+        {
+          label: "\u2190 Prev",
+          entityLabel: "&larr; Prev",
+          href: `${base}/prev/?from=${f}`,
+        },
+        {
+          label: "Web dev & design webring",
+          entityLabel: "Web dev &amp; design webring",
+          href: `${base}/`,
+        },
+        {
+          label: "Random",
+          entityLabel: "Random",
+          href: `${base}/random/?from=${f}`,
+        },
+        {
+          label: "Next \u2192",
+          entityLabel: "Next &rarr;",
+          href: `${base}/next/?from=${f}`,
+        },
+      ];
+    }
+
+    function renderHTML(links: Link[]): string {
+      return [
+        `<!-- Web dev & web design webring -->`,
+        `<nav class="wd-web-webring" aria-label="Web dev and web design webring">`,
+        ...links.map((l) => `  <a href="${l.href}">${l.entityLabel}</a>`),
+        `</nav>`,
+      ].join("\n");
+    }
+
+    function renderPreview(links: Link[]): HTMLElement {
+      const nav = document.createElement("nav");
+      nav.className = "wd-web-webring";
+      nav.setAttribute("aria-label", "Web dev and web design webring");
+      for (const link of links) {
+        const a = document.createElement("a");
+        a.href = link.href;
+        a.textContent = link.label;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        nav.appendChild(a);
+        nav.appendChild(document.createTextNode(" "));
+      }
+      return nav;
+    }
+
+    function update() {
+      const raw = input!.value.trim();
+      const normalized = raw === "" ? null : normalize(raw);
+      const valid = normalized !== null;
+      errEl!.hidden = valid || raw === "";
+      copy!.disabled = !valid;
+      if (valid) {
+        const links = buildLinks(normalized);
+        output!.value = renderHTML(links);
+        preview!.replaceChildren(renderPreview(links));
+        preview!.dataset.empty = "false";
+      } else {
+        output!.value = "";
+        preview!.innerHTML = previewEmpty;
+        preview!.dataset.empty = "true";
+      }
+    }
+
+    input.addEventListener("input", update);
+
+    copy.addEventListener("click", async () => {
+      if (!output.value) return;
+      try {
+        await navigator.clipboard.writeText(output.value);
+      } catch {
+        output.select();
+        return;
+      }
+      copy.textContent = "Copied!";
+      window.setTimeout(() => {
+        copy.textContent = COPY_LABEL;
+      }, 1500);
+    });
+  }
+</script>
+
+<style>
+  .embed {
+    margin: 2rem 0 0;
+    padding: 1.25rem 1.375rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  .embed__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.125rem;
+  }
+
+  .embed__lede,
+  .embed__note {
+    margin: 0 0 0.65rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .embed__note code {
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: var(--code-bg);
+    color: var(--text);
+  }
+
+  .field {
+    display: block;
+    margin-top: 0.85rem;
+  }
+
+  .field__label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+  }
+
+  .field__input,
+  .field__textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 0.9375rem;
+    padding: 0.5rem 0.65rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .field__textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    resize: vertical;
+    white-space: pre;
+  }
+
+  .field__input:focus-visible,
+  .field__textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  .field__error {
+    color: var(--danger);
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+  }
+
+  .preview {
+    border: 1px dashed var(--border);
+    background: var(--surface);
+    padding: 0.75rem 0.85rem;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.85rem;
+    border-radius: 6px;
+  }
+
+  .preview[data-empty="true"] {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .preview__empty {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .preview :global(nav.wd-web-webring) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.85rem;
+    align-items: center;
+  }
+
+  .preview :global(nav.wd-web-webring a) {
+    color: var(--link);
+    font-weight: 500;
+  }
+
+  .embed__copy {
+    margin-top: 0.85rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    color: #fff;
+    background: var(--link);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .embed__copy:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .embed__copy:not(:disabled):hover,
+  .embed__copy:not(:disabled):focus-visible {
+    background: var(--link-hover);
+  }
+</style>

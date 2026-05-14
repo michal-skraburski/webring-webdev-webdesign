@@ -1,0 +1,189 @@
+---
+import Footer from "../components/Footer.astro";
+import { HUB_BASE_URL } from "../lib/hub-url";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "A webring for web development and web design sites.",
+} = Astro.props;
+
+const hub = HUB_BASE_URL || Astro.url.origin;
+const canonicalUrl = new URL(Astro.url.pathname, hub).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f8fafc" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Web dev & web design webring" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/">Web dev &amp; design webring</a>
+        <ul class="nav__links">
+          <li><a href="/#sites">Sites</a></li>
+          <li><a href="/#embed-heading">Embed</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main" class="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --text: #0f172a;
+    --muted: #475569;
+    --surface: #ffffff;
+    --card: #f8fafc;
+    --border: #e2e8f0;
+    --link: #4f46e5;
+    --link-hover: #4338ca;
+    --ring: #6366f1;
+    --footer-bg: #f1f5f9;
+    --code-bg: #e2e8f0;
+    --warn-bg: #fef3c7;
+    --warn-border: #fcd34d;
+    --danger: #b91c1c;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --max: 42rem;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font);
+    background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 28%);
+    color: var(--text);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+  }
+
+  a {
+    color: var(--link);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0.75rem;
+    padding: 0.45rem 0.75rem;
+    background: var(--link);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    left: 0.75rem;
+  }
+
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .nav {
+    max-width: calc(var(--max) + 3rem);
+    margin: 0 auto;
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nav__brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav__brand:hover,
+  .nav__brand:focus-visible {
+    color: var(--link);
+  }
+
+  .nav__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.15rem;
+  }
+
+  .nav__links a {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .nav__links a:hover,
+  .nav__links a:focus-visible {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  :where(h1, h2, h3) {
+    scroll-margin-top: 4.25rem;
+  }
+
+  .main {
+    flex: 1;
+    width: 100%;
+    max-width: calc(var(--max) + 3rem);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 2.5rem;
+  }
+</style>

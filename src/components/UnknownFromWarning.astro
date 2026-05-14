@@ -1,0 +1,79 @@
+---
+---
+
+<aside
+  id="unknown-from-warning"
+  class="unknown-from-warning"
+  hidden
+  aria-labelledby="unknown-from-title"
+>
+  <p id="unknown-from-title" class="unknown-from-warning__title"></p>
+  <p class="unknown-from-warning__body">
+    You can still browse the member sites in the ring below.
+  </p>
+</aside>
+
+<script>
+  import { getCurrentSiteIndex, getWebringUrls } from "../lib/webring-nav";
+
+  function unknownReferrerLabel(raw: string | null): string | null {
+    if (raw == null) return null;
+    const t = raw.trim();
+    return t.length > 0 ? t : null;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const from = params.get("from")?.trim() ?? "";
+  const unknownLabel = unknownReferrerLabel(params.get("unknown"));
+  const urls = getWebringUrls();
+  const el = document.getElementById("unknown-from-warning");
+  const titleEl = document.getElementById("unknown-from-title");
+
+  if (el && titleEl) {
+    const fromIsListed =
+      urls.length > 0 &&
+      from.length > 0 &&
+      getCurrentSiteIndex(urls, from) !== -1;
+
+    if (!fromIsListed) {
+      let siteLabel: string | null = unknownLabel;
+      if (!siteLabel && from.length > 0) {
+        if (urls.length === 0 || getCurrentSiteIndex(urls, from) === -1) {
+          siteLabel = from;
+        }
+      }
+
+      if (siteLabel) {
+        titleEl.textContent = `${siteLabel} isn’t part of this webring`;
+        el.removeAttribute("hidden");
+        el.setAttribute("role", "alert");
+      }
+    }
+  }
+</script>
+
+<style>
+  .unknown-from-warning {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.125rem;
+    border-radius: 8px;
+    border: 1px solid var(--warn-border);
+    background: var(--warn-bg);
+  }
+
+  .unknown-from-warning__title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .unknown-from-warning__body {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>

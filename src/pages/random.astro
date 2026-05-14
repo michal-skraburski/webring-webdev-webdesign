@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Random site — web dev & design webring"
+  description="Redirecting to a random site in the webring."
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <p class="redirect-msg">Picking a random site&hellip;</p>
+  <noscript>
+    <p>
+      JavaScript is required for webring redirects.
+      <a href="/">Return to the hub</a>.
+    </p>
+  </noscript>
+</Layout>
+
+<script>
+  import {
+    getCurrentSiteIndex,
+    getWebringUrls,
+    hubPathWithUnlistedReferrer,
+    pickRandomIndex,
+  } from "../lib/webring-nav";
+
+  const urls = getWebringUrls();
+  if (urls.length === 0) {
+    location.replace("/");
+  } else {
+    const from = new URLSearchParams(location.search).get("from") ?? "";
+    const currentIndex = getCurrentSiteIndex(urls, from);
+    if (currentIndex === -1) {
+      location.replace(hubPathWithUnlistedReferrer(from));
+    } else {
+      const targetIndex = pickRandomIndex(urls.length, currentIndex);
+      const target = urls[targetIndex];
+      if (target) location.replace(target);
+    }
+  }
+</script>
+
+<style>
+  .redirect-msg {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>

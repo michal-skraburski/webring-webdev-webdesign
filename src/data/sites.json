@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Example member",
+    "url": "https://example.org",
+    "description": "Replace entries in src/data/sites.json with real sites in your ring."
+  },
+  {
+    "name": "Second example",
+    "url": "https://example.net",
+    "description": "Remove placeholders when you add real members."
+  }
+]
