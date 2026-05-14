@@ -1,0 +1,16 @@
+dist/
+node_modules/
+.astro/
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+terraform.tfvars
