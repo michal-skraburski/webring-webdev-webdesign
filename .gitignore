@@ -15,3 +15,5 @@ node_modules/
 crash.log
 override.tf
 terraform.tfvars
+terraform/terraform.tfvars
+terraform/prod.tfvars

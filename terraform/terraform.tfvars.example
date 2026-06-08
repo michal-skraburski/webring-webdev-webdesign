@@ -1,0 +1,14 @@
+dns_domain          = "webdev-webdesign.com"
+subdomain_name      = "webring"
+pages_project_name  = "your-pages-project-name"
+
+# Optional: override CNAME target (default is "<pages_project_name>.pages.dev")
+# pages_cname_target = "your-pages-project-name.pages.dev"
+
+netcup_customer_number = "123456"
+cloudflare_account_id  = "paste-account-id-from-dashboard"
+
+# Secrets — locally: export TF_VAR_netcup_ccp_api_key / … or put them in a gitignored tfvars file.
+#
+# CI (GitHub Actions): do not commit prod.tfvars. The workflow .github/workflows/terraform.yml
+# writes terraform/prod.tfvars from repository Secrets / Variables (see comments in that file).
