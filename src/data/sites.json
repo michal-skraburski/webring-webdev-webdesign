@@ -1,17 +1,11 @@
 [
   {
-    "name": "Example member",
-    "url": "https://example.org",
-    "description": "Replace entries in src/data/sites.json with real sites in your ring."
-  },
-  {
-    "name": "Second example",
-    "url": "https://example.net",
-    "description": "Remove placeholders when you add real members."
-  },
-  {
     "name": "from scratch",
     "url": "https://skraburski.com",
     "description": "a personal space with tools and blogs written by Michal Skraburski."
+  },
+    "name": "Wiktoria's Secret",
+    "url": "https://wiktoriassecret.com",
+    "description": "A place where Wiktoria posts and creates anything that is on her mind."
   }
 ]
