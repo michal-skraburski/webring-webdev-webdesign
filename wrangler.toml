@@ -1,0 +1,8 @@
+name = "webring-webdev-webdesign"
+type = "javascript"
+main = "dist/index.html"
+site = { bucket = "dist" }
+
+[env.production]
+route = "/"
+zone_id = ""
