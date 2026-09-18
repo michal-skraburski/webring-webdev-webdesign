@@ -8,5 +8,10 @@
     "name": "Second example",
     "url": "https://example.net",
     "description": "Remove placeholders when you add real members."
+  },
+  {
+    "name": "from scratch",
+    "url": "https://skraburski.com",
+    "description": "a personal space with tools and blogs written by Michal Skraburski."
   }
 ]
