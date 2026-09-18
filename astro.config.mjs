@@ -5,4 +5,7 @@ const site =
   "http://localhost:4321";
 
 // https://astro.build/config
-export default defineConfig({ site });
+export default defineConfig({
+  site,
+  output: "static",
+});
